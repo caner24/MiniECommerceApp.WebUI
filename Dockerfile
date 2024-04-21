@@ -5,7 +5,7 @@ FROM node:alpine AS development
 WORKDIR /src
 
 # Copy package.json and package-lock.json to container
-COPY ./package*.json ./
+COPY ./package*.json ./ ./tailwind.config.js ./
 
 # Install dependencies
 RUN npm install

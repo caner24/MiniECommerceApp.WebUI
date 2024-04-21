@@ -1,21 +1,12 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import Login from './components/Login';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home/Home';
 
-test('renders login form with email, password fields, and submit button', () => {
-  render(<Login />);
+test('renders home page content', () => {
+  render(<Home />);
   
-  // Check if the email label and input field are present
-  const emailLabel = screen.getByText(/email address/i);
-  expect(emailLabel).toBeInTheDocument();
-  
-  const emailInput = screen.getByPlaceholderText(/enter email/i);
-  expect(emailInput).toBeInTheDocument();
-  
-  // Check if the password label and input field are present
-  const passwordLabel = screen.getByText(/password/i);
-  expect(passwordLabel).toBeInTheDocument();
-  
-  const passwordInput = screen.getByPlaceholderText(/password/i);
-  expect(passwordInput).toBeInTheDocument();
-  
+  // Check if the Home page title is rendered
+  const pageTitle = screen.getByText(/Data to enrich your online business/i);
+  expect(pageTitle).toBeInTheDocument();
+
 });
