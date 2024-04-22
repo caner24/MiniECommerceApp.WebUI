@@ -10,8 +10,8 @@ function Login() {
   const [loginContent, setLoginContent] = useState("");
 
   async function LoginUser(e) {
-    await e.preventDefault();
-    axios
+     e.preventDefault();
+  await  axios
       .post(
         "https://miniecommerceapi.caprover.caneraycelep.social/api/identity/login?useCookies=true&useSessionCookies=true",
         {
