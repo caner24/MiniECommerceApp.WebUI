@@ -10,8 +10,8 @@ function Login() {
   const [loginContent, setLoginContent] = useState("");
 
   async function LoginUser(e) {
-     e.preventDefault();
-  await  axios
+    e.preventDefault();
+    await axios
       .post(
         "https://miniecommerceapi.caprover.caneraycelep.social/api/identity/login?useCookies=true&useSessionCookies=true",
         {
@@ -20,6 +20,8 @@ function Login() {
         }
       )
       .then((response) => {
+        var user = { userName: "cnr24clp" };
+        localStorage.setItem("userDetails", JSON.stringify(user));
         navigate("../", { replace: true });
         console.log(response);
       })

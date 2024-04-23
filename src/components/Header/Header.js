@@ -1,7 +1,10 @@
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 const navigation = [
   { name: "Anasayfa", href: "/" },
   { name: "Ürünler", href: "/product" },
@@ -9,7 +12,19 @@ const navigation = [
 ];
 
 export default function Header() {
+  const user = JSON.parse(localStorage.getItem("userDetails"));
+
+  const [userDet, setUserDet] = useState({});
+  const [loggedIn, setLoggedIn] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (user === null) setLoggedIn(false);
+    else {
+      setLoggedIn(true);
+      setUserDet(user);
+    }
+  }, user);
 
   return (
     <div>
@@ -43,9 +58,15 @@ export default function Header() {
               <Link to={item.href}>{item.name} </Link>
             ))}
           </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link to="/login">Log in </Link>
-          </div>
+          {loggedIn === false ? (
+            <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+              <Link to="/login">Log in </Link>
+            </div>
+          ) : (
+            <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+              <Link to="/login">{userDet.userName}</Link>
+            </div>
+          )}
         </nav>
         <Dialog
           as="div"
