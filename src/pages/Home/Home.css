@@ -1,6 +1,11 @@
 .background {
     background-image: url("../../assets/image.gif");
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
-   height: 100vw;
+    width: 100vw;  
+    height: 100vh;    
+    position: fixed;  
+    top: 0;           
+    left: 0;          
+    z-index: -1;      
   }
