@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
-import styles from "./Home.css";
-
+import "./Home.css";
 export default function Home() {
   return (
-    <div className={`relative isolate px-6 pt-14 lg:px-8 ${styles.background}`}>
+    <div className={`relative isolate px-6 pt-14 lg:px-8 background`}>
       <div
         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         aria-hidden="true"

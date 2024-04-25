@@ -2,6 +2,8 @@ import { Fragment, useState, useEffect, useCallback } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Page from "../../components/Page/Page";
+import Lottie from "lottie-react";
+import loadingAnimation from "../../assets/1714053167474.json";
 import {
   ChevronDownIcon,
   FunnelIcon,
@@ -18,31 +20,6 @@ const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
   { name: "Price: High to Low", href: "#", current: false },
 ];
-const filters = [
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
-    ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -50,21 +27,45 @@ function classNames(...classes) {
 
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [pagination, setPagination] = useState({});
 
   const [getProductNumber, setProductNumber] = useState(1);
   const [getProductPerSize, setProductPerSize] = useState(10);
+  const [filters, setFilters] = useState([
+    {
+      id: "category",
+      name: "Category",
+      options: [{}],
+    },
+  ]);
+
   const [products, setProducts] = useState([{}]);
+  const [loading, setLoading] = useState(true);
 
   const GetData = async () => {
+    //Get All Product
     await axios
       .get(
         `https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllProduct?PageNumber=${getProductNumber}&PageSize=${getProductPerSize}`
       )
       .then((response) => {
-        console.log(response);
+        setPagination(response.headers["x-pagination"]);
         setProducts(response.data);
       })
       .catch((err) => console.log(err));
+
+    //Get All Categories
+    await axios
+      .get(
+        "https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllCategories"
+      )
+      .then((response) => {
+        setFilters([
+          { id: "category", name: "Category", options: response.data },
+        ]);
+      })
+      .catch((err) => console.log(err));
+    setLoading(false);
   };
 
   const fetchData = useCallback(async () => {
@@ -75,7 +76,17 @@ export default function Product() {
     fetchData();
   }, [fetchData]);
 
-  return (
+  return loading === true ? (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Lottie animationData={loadingAnimation} />
+    </div>
+  ) : (
     <div className="bg-white">
       <div>
         {/* Mobile filter dialog */}
@@ -173,7 +184,7 @@ export default function Product() {
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
                                       className="ml-3 min-w-0 flex-1 text-gray-500"
                                     >
-                                      {option.label}
+                                      {option.categoryName}
                                     </label>
                                   </div>
                                 ))}
@@ -220,7 +231,7 @@ export default function Product() {
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
                       {sortOptions.map((option) => (
-                        <Menu.Item key={option.name}>
+                        <Menu.Item key={option.categoryName}>
                           {({ active }) => (
                             <a
                               href={option.href}
@@ -232,7 +243,7 @@ export default function Product() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              {option.name}
+                              {option.categoryName}
                             </a>
                           )}
                         </Menu.Item>
@@ -317,7 +328,7 @@ export default function Product() {
                                   htmlFor={`filter-${section.id}-${optionIdx}`}
                                   className="ml-3 text-sm text-gray-600"
                                 >
-                                  {option.label}
+                                  {option.categoryName}
                                 </label>
                               </div>
                             ))}
@@ -354,7 +365,7 @@ export default function Product() {
                         </a>
                       ))}
                     </div>
-                    <Page />
+                    <Page pagination={JSON.parse(pagination)} />
                   </div>
                 </div>
               </div>

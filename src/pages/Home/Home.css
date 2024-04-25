@@ -1,5 +1,6 @@
 .background {
-    background-image: url("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHdydHVocmZwZzN2ZXprY3hkbXp0dTRxZDdxcmV3Njd2aDJvMmNtayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26n6HDYUnvBYg7Rle/giphy.gif");
-    background-size: cover;
+    background-image: url("../../assets/image.gif");
+    background-size: contain;
     background-repeat: no-repeat;
+   height: 100vw;
   }

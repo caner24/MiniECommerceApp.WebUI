@@ -4,6 +4,7 @@ import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import "./Header.css";
 
 const navigation = [
   { name: "Anasayfa", href: "/" },
@@ -16,6 +17,7 @@ export default function Header() {
 
   const [userDet, setUserDet] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
