@@ -1,0 +1,11 @@
+.backgroundImg {
+  background-image: url("https://i.pinimg.com/originals/22/da/c7/22dac70c412e3afdb923eaf4cc6b9d59.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100vw;  
+  height: 100vh;    
+  position: fixed;  
+  top: 0;           
+  left: 0;          
+  z-index: -1;      
+}

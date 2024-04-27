@@ -4,6 +4,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import Page from "../../components/Page/Page";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../assets/1714053167474.json";
+import { Link } from "react-router-dom";
+
 import {
   ChevronDownIcon,
   FunnelIcon,
@@ -31,6 +33,7 @@ export default function Product() {
 
   const [getProductNumber, setProductNumber] = useState(1);
   const [getProductPerSize, setProductPerSize] = useState(10);
+  const [category, setCategory] = useState(" ");
   const [filters, setFilters] = useState([
     {
       id: "category",
@@ -46,7 +49,7 @@ export default function Product() {
     //Get All Product
     await axios
       .get(
-        `https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllProduct?PageNumber=${getProductNumber}&PageSize=${getProductPerSize}`
+        `https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllProduct?Categories=${category}&PageNumber=${getProductNumber}&PageSize=${getProductPerSize}`
       )
       .then((response) => {
         setPagination(response.headers["x-pagination"]);
@@ -70,7 +73,7 @@ export default function Product() {
 
   const fetchData = useCallback(async () => {
     await GetData();
-  }, [getProductNumber, getProductPerSize]);
+  }, [getProductNumber, getProductPerSize, category]);
 
   useEffect(() => {
     fetchData();
@@ -179,6 +182,7 @@ export default function Product() {
                                       type="checkbox"
                                       defaultChecked={option.checked}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      onClick={() => setCategory(option.value)}
                                     />
                                     <label
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
@@ -323,6 +327,7 @@ export default function Product() {
                                   type="checkbox"
                                   defaultChecked={option.checked}
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  onClick={() => setCategory("Cap")}
                                 />
                                 <label
                                   htmlFor={`filter-${section.id}-${optionIdx}`}
@@ -348,7 +353,10 @@ export default function Product() {
 
                     <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                       {products.map((product) => (
-                        <a key={product.Id} href={product.Id} className="group">
+                        <Link
+                          to={`/productDetail/${product.Id}`}
+                          className="group"
+                        >
                           <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
                             <img
                               src={`https://miniecommerceapi.caprover.caneraycelep.social/${product.ProductPhotos?.[0]?.PhotosUrl}`}
@@ -362,7 +370,7 @@ export default function Product() {
                           <p className="mt-1 text-lg font-medium text-gray-900">
                             {product.ProductPrice}
                           </p>
-                        </a>
+                        </Link>
                       ))}
                     </div>
                     <Page pagination={JSON.parse(pagination)} />

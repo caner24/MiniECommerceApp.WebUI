@@ -66,7 +66,7 @@ export default function Header() {
             </div>
           ) : (
             <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              <Link to="/login">{userDet.userName}</Link>
+              <Link to="/">{userDet.userName}</Link>
             </div>
           )}
         </nav>

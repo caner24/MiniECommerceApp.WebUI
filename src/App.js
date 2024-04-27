@@ -6,6 +6,7 @@ import Product from "./pages/Products/Product";
 import NotFound from "./pages/NotFound/NotFound";
 import Layout from "./pages/Layout/Layout";
 import MiniProvider from "./context/MiniProvider";
+import ProductDetail from "./pages/ProductDetail/ProductDetail";
 
 function App() {
   return (
@@ -15,6 +16,10 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/product" element={<Product />} />
+            <Route
+              path="/productDetail/:productId"
+              element={<ProductDetail />}
+            />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
