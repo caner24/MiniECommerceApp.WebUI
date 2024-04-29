@@ -7,17 +7,16 @@ import { useSelector } from "react-redux";
 import "./Header.css";
 
 const navigation = [
-  { name: "Anasayfa", href: "/" },
-  { name: "Ürünler", href: "/product" },
-  { name: "Hakkimizda", href: "#" },
+  { id: 1, name: "Anasayfa", href: "/" },
+  { id: 2, name: "Ürünler", href: "/product" },
+  { id: 3, name: "Hakkimizda", href: "#" },
 ];
 
 export default function Header() {
-  const user = JSON.parse(localStorage.getItem("userDetails"));
+  const user = useSelector((x) => x.user);
 
   const [userDet, setUserDet] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function Header() {
       setLoggedIn(true);
       setUserDet(user);
     }
-  }, user);
+  }, [user]);
 
   return (
     <div>
@@ -57,7 +56,9 @@ export default function Header() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             {navigation.map((item) => (
-              <Link to={item.href}>{item.name} </Link>
+              <Link key={item.id} to={item.href}>
+                {item.name}{" "}
+              </Link>
             ))}
           </div>
           {loggedIn === false ? (
