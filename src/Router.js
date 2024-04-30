@@ -10,17 +10,17 @@ import Authorization from "./components/Authentication/Authorization";
 import PERMISSIONS from "./components/Authentication/Permissions";
 import About from "./pages/About/About";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function App() {
-  const user = JSON.parse(localStorage.getItem("userDetails"));
   const dispatch = useDispatch();
+  var user = JSON.parse(localStorage.getItem("userDetails"));
 
   useEffect(() => {
     if (user !== null) {
       dispatch({ type: "LOGIN_USER", payload: { user } });
     }
-  }, [user]);
+  }, []);
 
   return (
     <Router>

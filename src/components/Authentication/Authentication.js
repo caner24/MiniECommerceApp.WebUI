@@ -7,9 +7,7 @@ const Authentication = ({ children }) => {
   const [userDet, setUserDet] = useState({});
 
   useEffect(() => {
-    if (user) {
-      setUserDet(user);
-    }
+    setUserDet(user);
   }, [user]);
 
   const location = useLocation();

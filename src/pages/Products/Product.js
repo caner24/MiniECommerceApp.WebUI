@@ -33,7 +33,7 @@ export default function Product() {
 
   const [getProductNumber, setProductNumber] = useState(1);
   const [getProductPerSize, setProductPerSize] = useState(10);
-  const [category, setCategory] = useState(" ");
+  const [category, setCategory] = useState("");
   const [filters, setFilters] = useState([
     {
       id: "category",
@@ -49,7 +49,9 @@ export default function Product() {
     //Get All Product
     await axios
       .get(
-        `https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllProduct?Categories=${category}&PageNumber=${getProductNumber}&PageSize=${getProductPerSize}`
+        category !== ""
+          ? `https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllProduct?Categories=${category}&PageNumber=${getProductNumber}&PageSize=${getProductPerSize}`
+          : `https://miniecommerceapi.caprover.caneraycelep.social/api/product/getAllProduct?PageNumber=${getProductNumber}&PageSize=${getProductPerSize}`
       )
       .then((response) => {
         setPagination(response.headers["x-pagination"]);
@@ -68,11 +70,12 @@ export default function Product() {
         ]);
       })
       .catch((err) => console.log(err));
-    setLoading(false);
   };
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     await GetData();
+    setLoading(false);
   }, [getProductNumber, getProductPerSize, category]);
 
   useEffect(() => {
@@ -182,7 +185,9 @@ export default function Product() {
                                       type="checkbox"
                                       defaultChecked={option.checked}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                      onClick={() => setCategory(option.value)}
+                                      onClick={() =>
+                                        setCategory(option.categoryName)
+                                      }
                                     />
                                     <label
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
@@ -327,7 +332,9 @@ export default function Product() {
                                   type="checkbox"
                                   defaultChecked={option.checked}
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  onClick={() => setCategory("Cap")}
+                                  onClick={() => {
+                                    setCategory(option.categoryName);
+                                  }}
                                 />
                                 <label
                                   htmlFor={`filter-${section.id}-${optionIdx}`}

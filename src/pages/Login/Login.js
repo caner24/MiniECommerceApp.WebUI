@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../../components/FormInput/FormInput";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 
 function Login() {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [loginContent, setLoginContent] = useState("");
+  const dispatch = useDispatch();
 
   async function LoginUser(e) {
     e.preventDefault();
@@ -22,6 +24,7 @@ function Login() {
       .then((response) => {
         var user = { userName: "cnr24clp" };
         localStorage.setItem("userDetails", JSON.stringify(user));
+        dispatch({ type: "LOGIN_USER", payload: { user } });
         navigate("../", { replace: true });
         console.log(response);
       })
