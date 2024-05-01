@@ -45,8 +45,8 @@ export default function Product() {
   const [products, setProducts] = useState([{}]);
   const [loading, setLoading] = useState(true);
 
-  const GetData = async () => {
-    //Get All Product
+  const fetchData = useCallback(async () => {
+
     await axios
       .get(
         category !== ""
@@ -70,15 +70,11 @@ export default function Product() {
         ]);
       })
       .catch((err) => console.log(err));
-  };
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    await GetData();
     setLoading(false);
   }, [getProductNumber, getProductPerSize, category]);
 
   useEffect(() => {
+    setLoading(true);
     fetchData();
   }, [fetchData]);
 

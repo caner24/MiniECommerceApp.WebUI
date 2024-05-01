@@ -15,18 +15,39 @@ function Login() {
     e.preventDefault();
     await axios
       .post(
-        "https://miniecommerceapi.caprover.caneraycelep.social/api/identity/login?useCookies=true&useSessionCookies=true",
+        "https://miniecommerceapi.caprover.caneraycelep.social/api/identity/login?useCookies=false&useSessionCookies=false",
         {
           email: userEmail,
           password: userPassword,
         }
       )
-      .then((response) => {
-        var user = { userName: "cnr24clp" };
-        localStorage.setItem("userDetails", JSON.stringify(user));
-        dispatch({ type: "LOGIN_USER", payload: { user } });
+      .then(async (response) => {
+        var bearer = { bearer: response.data.accessToken };
+
+        dispatch({ type: "SET_BEARER", payload: { bearer } });
+        const options = {
+          headers: {
+            Authorization: `Bearer ${bearer.bearer}`,
+          },
+        };
+        await axios
+          .get(
+            "https://miniecommerceapi.caprover.caneraycelep.social/api/identity/manage/info",
+            options
+          )
+          .then((response) => {
+            var responseUser = response.data.email;
+            responseUser = responseUser.substring(0, responseUser.indexOf("@"));
+            var user = {
+              userName: responseUser,
+              userEmail: response.data.email,
+            };
+            dispatch({ type: "LOGIN_USER", payload: { user } });
+            localStorage.setItem("userDetails", JSON.stringify(user));
+            localStorage.setItem("bearer", JSON.stringify(bearer));
+          });
+
         navigate("../", { replace: true });
-        console.log(response);
       })
       .catch((error) => {
         setLoginContent("Şifreniz veya kullanıcı adınız hatalı !.");

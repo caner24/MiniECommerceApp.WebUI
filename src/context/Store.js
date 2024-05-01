@@ -1,5 +1,5 @@
 export default {
+  bearer: null,
   user: null,
-  isSıgnedIn: null,
-  product: null,
+  basket: null,
 };

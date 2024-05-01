@@ -9,16 +9,20 @@ import ProductDetail from "./pages/ProductDetail/ProductDetail";
 import Authorization from "./components/Authentication/Authorization";
 import PERMISSIONS from "./components/Authentication/Permissions";
 import About from "./pages/About/About";
+import Info from "./pages/Info/Info";
+import Cart from "./pages/Cart/Cart";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function App() {
   const dispatch = useDispatch();
   var user = JSON.parse(localStorage.getItem("userDetails"));
+  var bearer = JSON.parse(localStorage.getItem("bearer"));
 
   useEffect(() => {
     if (user !== null) {
       dispatch({ type: "LOGIN_USER", payload: { user } });
+      dispatch({ type: "SET_BEARER", payload: { bearer } });
     }
   }, []);
 
@@ -29,6 +33,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/product" element={<Product />} />
           <Route path="/productDetail/:productId" element={<ProductDetail />} />
+          <Route path="/info" element={<Info />} />
+          <Route path="/cart" element={<Cart />} />
         </Route>
         <Route
           element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}
