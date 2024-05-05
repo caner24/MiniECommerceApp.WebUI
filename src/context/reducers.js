@@ -12,6 +12,10 @@ export default function reducers(state, action) {
       const { basket } = action.payload;
       return { ...state, basket };
 
+    case "SET_REFRESH":
+      const { refreshToken } = action.payload;
+      return { ...state, refreshToken };
+
     default:
       return state;
   }

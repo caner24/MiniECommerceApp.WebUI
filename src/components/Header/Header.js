@@ -22,57 +22,59 @@ const navigation = [
 ];
 
 export default function Header() {
+  const navigate = useNavigate();
   const user = useSelector((x) => x.user);
   const bearer = useSelector((x) => x.bearer);
+  const basket = useSelector((x) => x.basket);
 
   const dispatch = useDispatch();
-  const [userDet, setUserDet] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
-  const [basket, setBasket] = useState([{}]);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const logOut = (e) => {
     e.preventDefault();
 
+    setLoggedIn(false);
     dispatch({ type: "LOGIN_USER", payload: { user: null } });
     dispatch({ type: "SET_BEARER", payload: { bearer: null } });
     dispatch({ type: "SET_BASKET", payload: { basket: null } });
+    dispatch({ type: "SET_REFRESH", payload: { basket: null } });
     localStorage.removeItem("bearer");
     localStorage.removeItem("userDetails");
-    setLoggedIn(false);
+    localStorage.removeItem("SET_REFRESH");
+    window.location.reload();
   };
 
   const getUserBasket = useCallback(async () => {
     if (user && user.userEmail) {
-      try {
-        const options = {
-          headers: {
-            Authorization: `Bearer ${bearer.bearer}`,
-          },
-        };
-        const response = await axios.get(
+      const options = {
+        headers: {
+          Authorization: `Bearer ${bearer.bearer}`,
+        },
+      };
+      await axios
+        .get(
           `https://miniecommerceapi.caprover.caneraycelep.social/api/basket/getUserBasket/${user.userEmail}`,
           options
-        );
-        dispatch({
-          type: "SET_BASKET",
-          payload: { basket: response.data },
-        });
-      } catch (error) {
-        console.error("Error fetching user basket:", error);
-      }
+        )
+        .then((response) => {
+          dispatch({
+            type: "SET_BASKET",
+            payload: { basket: response.data },
+          });
+        })
+        .catch((error) => console.log(error));
     }
-  }, [user, bearer]);
+  }, [user, bearer, dispatch]);
 
   useEffect(() => {
     if (user === null) setLoggedIn(false);
     else {
       setLoggedIn(true);
-      setUserDet(user);
       getUserBasket();
     }
   }, [basket, user, getUserBasket]);
-
   return (
     <div>
       <header className="absolute inset-x-0 top-0 z-50">
@@ -112,7 +114,9 @@ export default function Header() {
                   Cart:
                 </Link>
                 <span class="text-blue-500 font-semibold">
-                  {basket !== undefined ? basket.length : 0}
+                  {basket !== null && basket.products !== null
+                    ? basket.products.length
+                    : 0}
                 </span>
               </div>
             </div>
@@ -126,7 +130,7 @@ export default function Header() {
             <Menu as="div" className="hidden lg:flex lg:flex-1 lg:justify-end">
               <div>
                 <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                  {userDet.userName}
+                  {user.userName}
                   <ChevronDownIcon
                     className="-mr-1 h-5 w-5 text-gray-400"
                     aria-hidden="true"

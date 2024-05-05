@@ -23,8 +23,10 @@ function Login() {
       )
       .then(async (response) => {
         var bearer = { bearer: response.data.accessToken };
+        var refreshToken = { refreshToken: response.data.refreshToken };
 
         dispatch({ type: "SET_BEARER", payload: { bearer } });
+        dispatch({ type: "SET_REFRESH", payload: { refreshToken } });
         const options = {
           headers: {
             Authorization: `Bearer ${bearer.bearer}`,
@@ -45,6 +47,7 @@ function Login() {
             dispatch({ type: "LOGIN_USER", payload: { user } });
             localStorage.setItem("userDetails", JSON.stringify(user));
             localStorage.setItem("bearer", JSON.stringify(bearer));
+            localStorage.setItem("refresh", JSON.stringify(refreshToken));
           });
 
         navigate("../", { replace: true });

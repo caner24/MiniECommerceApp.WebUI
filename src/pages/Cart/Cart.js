@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import axios from "axios";
 const products = [
   {
     id: 1,
@@ -33,14 +34,38 @@ const products = [
 
 export default function Example() {
   const basket = useSelector((x) => x.basket);
+  const user = useSelector((x) => x.user);
+  const bearer = useSelector((x) => x.bearer);
 
   const [open, setOpen] = useState(true);
-  const [getBasket, setBasket] = useState([{}]);
+  const [subtotal, setSubTotal] = useState(0);
+
+  const removeItemFromCart = async (id) => {
+    const options = {
+      userId: user.userEmail,
+      prodId: [id],
+    };
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${bearer.bearer}`,
+      },
+    };
+    await axios.post(
+      "https://miniecommerceapi.caprover.caneraycelep.social/api/basket/updateUserBasket",
+      options,
+      config
+    );
+  };
 
   useEffect(() => {
-    console.log("s");
-    setBasket(basket);
-    console.log(getBasket);
+    if (basket) {
+      let total = 0;
+      basket.products.forEach((item) => {
+        total += item.productPrice;
+      });
+      setSubTotal(total);
+    }
   }, [basket]);
 
   return (
@@ -127,10 +152,15 @@ export default function Example() {
                                       </p>
                                     </div>
                                     <div className="flex flex-1 items-end justify-between text-sm">
-                                      <p className="text-gray-500">Qty 1</p>
+                                      <p className="text-gray-500">
+                                        Qty {prod.amount}
+                                      </p>
 
                                       <div className="flex">
                                         <button
+                                          onClick={() => {
+                                            removeItemFromCart(prod.id);
+                                          }}
                                           type="button"
                                           className="font-medium text-indigo-600 hover:text-indigo-500"
                                         >
@@ -149,7 +179,7 @@ export default function Example() {
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
-                        <p>$262.00</p>
+                        <p>${subtotal}</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500">
                         Shipping and taxes calculated at checkout.
