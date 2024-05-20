@@ -148,7 +148,7 @@ export default function Example() {
                                         </p>
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500">
-                                        asd
+                                        {prod.productName}
                                       </p>
                                     </div>
                                     <div className="flex flex-1 items-end justify-between text-sm">

@@ -14,6 +14,7 @@ import Cart from "./pages/Cart/Cart";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import ResetPassword from "./pages/ResetPassword/ResetPassword";
 function App() {
   const dispatch = useDispatch();
   var user = JSON.parse(localStorage.getItem("userDetails"));
@@ -52,7 +53,7 @@ function App() {
       dispatch({ type: "SET_BEARER", payload: { bearer } });
       setTimeout(() => {
         refreshToken();
-      }, 3600);
+      }, 36000);
     }
   }, [bearer, dispatch, refreshToken, user]);
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="/productDetail/:productId" element={<ProductDetail />} />
           <Route path="/info" element={<Info />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/resetPassword/:email/:token/" element={<ResetPassword />} />
         </Route>
         <Route
           element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}

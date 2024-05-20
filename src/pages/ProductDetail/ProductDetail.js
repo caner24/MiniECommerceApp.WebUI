@@ -5,6 +5,7 @@ import axios from "axios";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../assets/1714053167474.json";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 const product = {
   name: "Basic Tee 6-Pack",
   price: "$192",
@@ -66,33 +67,83 @@ export default function ProductDetail() {
   const [productDetail, setProductDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const { productId } = useParams();
-
+  const [comments, setComment] = useState("");
+  const dispatch = useDispatch();
   const reviews = { href: "#", average: 4, totalCount: 117 };
   const user = useSelector((x) => x.user);
   const bearer = useSelector((x) => x.bearer);
 
-  const addToBasket = async (e) => {
-    setLoading(true);
+  const leaveComment = async (e) => {
     e.preventDefault();
     const options = {
-      userId: user.userEmail,
-      prodId: productId,
-      amount: 1,
-    };
-
-    const config = {
       headers: {
         Authorization: `Bearer ${bearer.bearer}`,
       },
     };
-
     await axios
       .post(
-        "https://miniecommerceapi.caprover.caneraycelep.social/api/basket/addProductToBasket",
-        options,
-        config
+        "https://miniecommerceapi.caprover.caneraycelep.social/api/comments/addCommentToProduct",
+        {
+          userId: user.userEmail,
+          productId: productId,
+          commentText: comments,
+        },
+        options
       )
-      .catch((err) => console.log(err));
+      .then((response) => {
+        if (response.data.isCommentConfirmed === true) {
+          console.log("Yorum başarıyla eklendi");
+        } else {
+          alert("Yorumda bir argo bulnmaktadir !.");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const addToBasket = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+
+    if (user != null) {
+      const options = {
+        userId: user.userEmail,
+        prodId: productId,
+        amount: 1,
+      };
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${bearer.bearer}`,
+        },
+      };
+
+      await axios
+        .post(
+          "https://miniecommerceapi.caprover.caneraycelep.social/api/basket/addProductToBasket",
+          options,
+          config
+        )
+        .catch((err) => console.log(err));
+    } else {
+      const userBasket =
+        localStorage.getItem("basket") != null
+          ? JSON.parse(localStorage.getItem("basket"))
+          : { products: [] };
+      userBasket.products.push({
+        productName: productDetail.productName,
+        id: productDetail.id,
+        productPrice: productDetail.productPrice,
+        productPhotos: productDetail.productPhotos,
+      });
+      localStorage.setItem("basket", JSON.stringify(userBasket));
+      dispatch({
+        type: "SET_BASKET",
+        payload: { basket: userBasket },
+      });
+    }
+    setLoading(false);
   };
 
   const fetchData = useCallback(async () => {
@@ -301,8 +352,9 @@ export default function ProductDetail() {
                 })}
             </div>
             {user && user.userEmail !== null && (
-              <form className="flex justify-evenly">
+              <form className="flex justify-evenly" onSubmit={leaveComment}>
                 <input
+                  onChange={(e) => setComment(e.target.value)}
                   className=" w-96 text-sm font-medium text-gray-900"
                   type="text"
                   placeholder="Bir yorum birak"

@@ -5,7 +5,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import "./Header.css";
@@ -22,7 +21,6 @@ const navigation = [
 ];
 
 export default function Header() {
-  const navigate = useNavigate();
   const user = useSelector((x) => x.user);
   const bearer = useSelector((x) => x.bearer);
   const basket = useSelector((x) => x.basket);
@@ -43,11 +41,13 @@ export default function Header() {
     localStorage.removeItem("bearer");
     localStorage.removeItem("userDetails");
     localStorage.removeItem("SET_REFRESH");
+    localStorage.removeItem("basket");
+    localStorage.removeItem("refresh");
     window.location.reload();
   };
 
   const getUserBasket = useCallback(async () => {
-    if (user && user.userEmail) {
+    if (user && user.userEmail != null) {
       const options = {
         headers: {
           Authorization: `Bearer ${bearer.bearer}`,
@@ -65,6 +65,13 @@ export default function Header() {
           });
         })
         .catch((error) => console.log(error));
+    } else {
+      if (localStorage.getItem("basket")) {
+        dispatch({
+          type: "SET_BASKET",
+          payload: { basket: JSON.parse(localStorage.getItem("basket")) },
+        });
+      }
     }
   }, [user, bearer, dispatch]);
 
