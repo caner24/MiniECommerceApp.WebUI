@@ -11,6 +11,7 @@ import PERMISSIONS from "./components/Authentication/Permissions";
 import About from "./pages/About/About";
 import Info from "./pages/Info/Info";
 import Cart from "./pages/Cart/Cart";
+import Register from "./pages/Register/Register";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -74,7 +75,10 @@ function App() {
           <Route path="/about" element={<About />} />
         </Route>
         {user === null ? (
-          <Route path="/login" element={<Login />} />
+          <>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </>
         ) : (
           <Route path="/login" element={<Home />} />
         )}

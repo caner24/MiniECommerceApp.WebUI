@@ -1,13 +1,10 @@
 export default function FormInput({
   setVariable,
   nameInput,
+  onChange,
   typeInput,
   labelText,
 }) {
-  function setElement(e) {
-    setVariable(e.target.value);
-  }
-
   return (
     <div>
       <label
@@ -18,7 +15,8 @@ export default function FormInput({
       </label>
       <div className="mt-2">
         <input
-          onChange={setElement}
+          value={setVariable}
+          onChange={onChange}
           id={nameInput}
           name={nameInput}
           type={typeInput}
