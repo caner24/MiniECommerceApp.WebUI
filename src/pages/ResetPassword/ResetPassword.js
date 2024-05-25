@@ -1,10 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
 export default function ResetPassword() {
+  const location = useLocation();
   const [password, setPassword] = useState("");
-  const { token, email } = useParams();
+
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get('Token');
+  const email = queryParams.get('email');
+
   const resetPassword = (e) => {
     e.preventDefault();
 
@@ -48,7 +53,7 @@ export default function ResetPassword() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={resetPassword}>
+          <form className="space-y-6" onSubmit={resetPassword} method="post">
             <div>
               <label
                 htmlFor="password"

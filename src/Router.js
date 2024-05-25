@@ -67,7 +67,7 @@ function App() {
           <Route path="/productDetail/:productId" element={<ProductDetail />} />
           <Route path="/info" element={<Info />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/resetPassword/:email/:token/" element={<ResetPassword />} />
+          <Route path="/resetPassword" element={<ResetPassword />} />
         </Route>
         <Route
           element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}
