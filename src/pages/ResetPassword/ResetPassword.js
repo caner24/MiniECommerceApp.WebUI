@@ -1,14 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 export default function ResetPassword() {
   const location = useLocation();
   const [password, setPassword] = useState("");
 
   const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get('Token');
-  const email = queryParams.get('email');
+  const token = decodeURIComponent(queryParams.get("token"));
+  const email = queryParams.get("email");
 
   const resetPassword = (e) => {
     e.preventDefault();
@@ -18,6 +18,7 @@ export default function ResetPassword() {
       resetCode: token,
       newPassword: password,
     };
+    console.log(options);
     axios
       .post(
         "https://miniecommerceapi.caprover.caneraycelep.social/api/identity/resetPassword",
@@ -28,6 +29,7 @@ export default function ResetPassword() {
           alert("Şifreniz başarıyla sıfırlandı.");
         } else {
           alert("Şifre sıfırlanırken bir hata oluştu.");
+          console.log(response);
         }
       })
       .catch((error) => {
