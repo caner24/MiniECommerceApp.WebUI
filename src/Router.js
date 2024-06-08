@@ -16,6 +16,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
+import Success from "./pages/Success/Success";
+import Cancel from "./pages/Cancel/Cancel";
 function App() {
   const dispatch = useDispatch();
   var user = JSON.parse(localStorage.getItem("userDetails"));
@@ -67,6 +69,8 @@ function App() {
           <Route path="/productDetail/:productId" element={<ProductDetail />} />
           <Route path="/info" element={<Info />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/cancel" element={<Cancel />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
         </Route>
         <Route
