@@ -125,19 +125,43 @@ export default function ProductDetail() {
           options,
           config
         )
+        .then((response) => {
+          dispatch({
+            type: "SET_BASKET",
+            payload: { basket: response.data.basket },
+          });
+        })
         .catch((err) => console.log(err));
     } else {
       const userBasket =
         localStorage.getItem("basket") != null
           ? JSON.parse(localStorage.getItem("basket"))
           : { products: [] };
-      userBasket.products.push({
-        productName: productDetail.productName,
-        id: productDetail.id,
-        productPrice: productDetail.productPrice,
-        productPhotos: productDetail.productPhotos,
-      });
+
+      // Ürünün sepette olup olmadığını kontrol edin
+      let existingProduct = userBasket.products.find(
+        (x) => x.id === productDetail.id
+      );
+
+      if (existingProduct) {
+        // Ürün zaten sepette, miktarını artırın
+        existingProduct.amount += 1;
+      } else {
+        // Ürün sepette değil, yeni ürünü sepete ekleyin
+        userBasket.products.push({
+          productName: productDetail.productName,
+          id: productDetail.id,
+          productPrice: productDetail.productPrice,
+          productPhotos: productDetail.productPhotos,
+          stripeProductId: productDetail.stripeProductId,
+          amount: 1,
+        });
+      }
+
+      // Güncellenen sepeti localStorage'a kaydedin
       localStorage.setItem("basket", JSON.stringify(userBasket));
+
+      // Sepet durumunu güncellemek için dispatch kullanın
       dispatch({
         type: "SET_BASKET",
         payload: { basket: userBasket },

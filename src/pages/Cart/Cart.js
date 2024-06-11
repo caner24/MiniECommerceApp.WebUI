@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -9,48 +9,89 @@ export default function Example() {
   const basket = useSelector((x) => x.basket);
   const user = useSelector((x) => x.user);
   const bearer = useSelector((x) => x.bearer);
+  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(true);
   const [subtotal, setSubTotal] = useState(0);
 
   const stripeCheckout = async () => {
-    await axios
-      .post(
-        "https://miniecommerceapi.caprover.caneraycelep.social/api/stripe/create-checkout-session"
-      )
-      .then(async (response) => {
-        if (response.status === 200) {
-          window.location.replace(response.headers.get("location"));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const productPriceAndAmount = {};
+    basket.products.forEach((product) => {
+      productPriceAndAmount[product.stripeProductId] = product.amount;
+    });
+    if (bearer !== null) {
+      const options = {
+        headers: {
+          Authorization: `Bearer ${bearer.bearer}`,
+        },
+      };
+      await axios
+        .post(
+          "https://miniecommerceapi.caprover.caneraycelep.social/api/stripe/create-checkout-session",
+          productPriceAndAmount,
+          options
+        )
+        .then(async (response) => {
+          if (response.status === 200) {
+            window.location.replace(response.headers.get("location"));
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      await axios
+        .post(
+          "https://miniecommerceapi.caprover.caneraycelep.social/api/stripe/create-checkout-session",
+          productPriceAndAmount
+        )
+        .then(async (response) => {
+          if (response.status === 200) {
+            localStorage.removeItem("basket");
+            dispatch({
+              type: "SET_BASKET",
+              payload: { basket: null },
+            });
+            window.location.replace(response.headers.get("location"));
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const removeItemFromCart = async (id) => {
-    const options = {
-      userId: user.userEmail,
-      prodId: [id],
-    };
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${bearer.bearer}`,
-      },
-    };
-    await axios.post(
-      "https://miniecommerceapi.caprover.caneraycelep.social/api/basket/updateUserBasket",
-      options,
-      config
-    );
+    if (user != null) {
+      const options = {
+        userId: user.userEmail,
+        prodId: [id],
+      };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${bearer.bearer}`,
+        },
+      };
+      await axios.post(
+        "https://miniecommerceapi.caprover.caneraycelep.social/api/basket/updateUserBasket",
+        options,
+        config
+      );
+    } else {
+      const newBasket = basket.products.filter((x) => x.id !== id);
+      localStorage.setItem("basket", JSON.stringify({ products: newBasket }));
+      dispatch({
+        type: "SET_BASKET",
+        payload: { basket: { products: newBasket } },
+      });
+    }
   };
 
   useEffect(() => {
     if (basket) {
       let total = 0;
       basket.products.forEach((item) => {
-        total += item.productPrice;
+        total += item.productPrice * item.amount;
       });
       setSubTotal(total);
     }
@@ -109,56 +150,52 @@ export default function Example() {
                             role="list"
                             className="-my-6 divide-y divide-gray-200"
                           >
-                            {basket &&
-                              basket.products &&
-                              basket.products.map((prod) => (
-                                <li key={prod.id} className="flex py-6">
-                                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                    <img
-                                      src={`https://miniecommerceapi.caprover.caneraycelep.social/${prod.productPhotos?.[0]?.photosUrl}`}
-                                      alt={prod.productPhotos?.[0]?.photosUrl}
-                                      className="h-full w-full object-cover object-center"
-                                    />
-                                  </div>
+                            {basket?.products.map((prod) => (
+                              <li key={prod.id} className="flex py-6">
+                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                  <img
+                                    src={`https://miniecommerceapi.caprover.caneraycelep.social/${prod.productPhotos?.[0]?.photosUrl}`}
+                                    alt={prod.productPhotos?.[0]?.photosUrl}
+                                    className="h-full w-full object-cover object-center"
+                                  />
+                                </div>
 
-                                  <div className="ml-4 flex flex-1 flex-col">
-                                    <div>
-                                      <div className="flex justify-between text-base font-medium text-gray-900">
-                                        <h3>
-                                          <Link
-                                            to={`/productDetail/${prod.id}`}
-                                          >
-                                            {prod.productName}
-                                          </Link>
-                                        </h3>
-                                        <p className="ml-4">
-                                          {prod.productPrice}
-                                        </p>
-                                      </div>
-                                      <p className="mt-1 text-sm text-gray-500">
-                                        {prod.productName}
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-gray-900">
+                                      <h3>
+                                        <Link to={`/productDetail/${prod.id}`}>
+                                          {prod.productName}
+                                        </Link>
+                                      </h3>
+                                      <p className="ml-4">
+                                        {prod.productPrice}
                                       </p>
                                     </div>
-                                    <div className="flex flex-1 items-end justify-between text-sm">
-                                      <p className="text-gray-500">
-                                        Qty {prod.amount}
-                                      </p>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      {prod.productName}
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <p className="text-gray-500">
+                                      Qty {prod.amount}
+                                    </p>
 
-                                      <div className="flex">
-                                        <button
-                                          onClick={() => {
-                                            removeItemFromCart(prod.id);
-                                          }}
-                                          type="button"
-                                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                                        >
-                                          Remove
-                                        </button>
-                                      </div>
+                                    <div className="flex">
+                                      <button
+                                        onClick={() => {
+                                          removeItemFromCart(prod.id);
+                                        }}
+                                        type="button"
+                                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                                      >
+                                        Remove
+                                      </button>
                                     </div>
                                   </div>
-                                </li>
-                              ))}
+                                </div>
+                              </li>
+                            ))}
                           </ul>
                         </div>
                       </div>
@@ -173,12 +210,17 @@ export default function Example() {
                         Shipping and taxes calculated at checkout.
                       </p>
                       <div className="mt-6">
-                        <button
-                          onClick={stripeCheckout}
-                          className="w-96 flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                        >
-                          Checkout
-                        </button>
+                        {basket?.products.length !== 0 && (
+                          <button
+                            disabled={
+                              basket?.products.length === 0 ? true : false
+                            }
+                            onClick={stripeCheckout}
+                            className="w-96 flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                          >
+                            Checkout
+                          </button>
+                        )}
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                         <p>

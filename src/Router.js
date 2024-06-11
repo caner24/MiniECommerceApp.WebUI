@@ -19,11 +19,14 @@ import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Success from "./pages/Success/Success";
 import Cancel from "./pages/Cancel/Cancel";
 function App() {
+  console.log("sa");
   const dispatch = useDispatch();
   var user = JSON.parse(localStorage.getItem("userDetails"));
   var bearer = JSON.parse(localStorage.getItem("bearer"));
   var refreshTokenCode = JSON.parse(localStorage.getItem("refreshToken"));
+  var basket = JSON.parse(localStorage.getItem("basket"));
 
+  const refreshInterval = 3600 * 1000;
   const refreshToken = useCallback(async () => {
     const options = {
       refreshToken: refreshTokenCode,
@@ -50,15 +53,41 @@ function App() {
       .catch((err) => console.log(err));
   }, [refreshTokenCode, dispatch]);
 
+  const getUserBasket = useCallback(async () => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${bearer.bearer}`,
+      },
+    };
+    await axios
+      .get(
+        "https://miniecommerceapi.caprover.caneraycelep.social/api/basket/getUserBasket",
+        config
+      )
+      .then((response) => {
+        var basket = response.data;
+        dispatch({ type: "SET_BASKET", payload: { basket } });
+      });
+  }, [bearer, dispatch]);
   useEffect(() => {
+    console.log(user);
     if (user !== null) {
       dispatch({ type: "LOGIN_USER", payload: { user } });
       dispatch({ type: "SET_BEARER", payload: { bearer } });
-      setTimeout(() => {
-        refreshToken();
-      }, 36000);
+      setInterval(refreshToken, refreshInterval - 5 * 60 * 1000);
+      getUserBasket();
+    } else {
+      dispatch({ type: "SET_BASKET", payload: { basket } });
     }
-  }, [bearer, dispatch, refreshToken, user]);
+  }, [
+    bearer,
+    dispatch,
+    refreshToken,
+    user,
+    basket,
+    getUserBasket,
+    refreshInterval,
+  ]);
 
   return (
     <Router>
