@@ -91,10 +91,14 @@ export default function ProductDetail() {
         options
       )
       .then((response) => {
-        if (response.data.isCommentConfirmed === true) {
-          console.log("Yorum başarıyla eklendi");
+        if (response.status === 200) {
+          if (response.data.isCommentConfirmed === true) {
+            console.log("Yorum başarıyla eklendi");
+          } else {
+            alert("Yorumda bir argo bulnmaktadir !.");
+          }
         } else {
-          alert("Yorumda bir argo bulnmaktadir !.");
+          alert("Yorum yapmak için ürünü satın almalısınız.");
         }
       })
       .catch((err) => {
