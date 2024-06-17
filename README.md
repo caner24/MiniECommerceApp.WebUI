@@ -23,7 +23,7 @@ Yup: For defining validation schemas in a declarative way.
 Screenshots:
 
 <h3>HomePage</h3>
-<img src="https://i.ibb.co/Z2vSJm2/Home-Page-1.gif" />
+<img src="https://i.ibb.co/Z2vSJm2/Home-Page-1.gif" alt="Home-Page-1" border="0">
 </br>
 
 <h3>Products</h3>
