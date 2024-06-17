@@ -23,27 +23,27 @@ Yup: For defining validation schemas in a declarative way.
 Screenshots:
 
 <h3>HomePage</h3>
-<img src="https://drive.google.com/file/d/1yA88qPt-G2YgjO5UJPpz5Xz6F3FFGqa3/view?usp=sharing" />
+<img src="https://i.ibb.co/Z2vSJm2/Home-Page-1.gif" />
 </br>
 
 <h3>Products</h3>
-<img src="https://drive.google.com/file/d/1Y4EE_YzonyBr0PadV2GB4RBI7l8JiLkR/view?usp=sharing" />
+<img src="https://i.ibb.co/B3hD48Y/Ekran-g-r-nt-s-2024-06-17-224709.png" />
 </br>
 
 <h3>Product Detail</h3>
-<img src="https://drive.google.com/file/d/1ECM9uDnSvunEDIUcNFS5-jIaVlj744tk/view?usp=sharing" />
+<img src="https://i.ibb.co/g3SrbJC/Product-Detail.png" />
 </br>
 
 <h3>ML.NET Offensive Word Saver Model Test</h3>
-<img src="https://drive.google.com/file/d/1EKvWgsDM_A7xhYgX1sRrVsu-n51vqQm6/view?usp=sharing" />
+<img src="https://i.ibb.co/jJr5J2V/ML-NET-MODEL.png" />
 </br>
 
 <h3>Basket</h3>
-<img src="https://drive.google.com/file/d/1Z2hR8WygEo4Fl9ppngEqbp8wziPkAPVT/view?usp=sharing" />
+<img src="https://i.ibb.co/23XCFSm/Basket.png" />
 </br>
 
 <h3>Stripe Checkout</h3>
-<img src="https://drive.google.com/file/d/1gAnHSVxFgldiG_g4ao3tqkBE4RxkF3Qq/view?usp=sharing" />
+<img src="https://i.ibb.co/Vgs84LH/Stripe-Checkout.png" />
 
 
 
